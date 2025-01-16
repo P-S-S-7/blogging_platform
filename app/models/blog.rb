@@ -13,7 +13,7 @@ class Blog < ApplicationRecord
 		end
 	end
 
-	def self.create(title, description, user_id)
-		self.new({:title => title, :description => description, :user_id => user_id})
+	def self.get_new(title, description, user_id)
+		Blog.new({:title => title, :description => description, :user_id => user_id})
 	end
 end
