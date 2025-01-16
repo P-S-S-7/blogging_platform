@@ -1,0 +1,21 @@
+<div class="container mx-auto px-4">
+	<div class="flex justify-between items-center mb-8">
+		<h1 class="text-2xl font-bold text-gray-800">Blogs</h1>
+		<%= link_to "New Blog", new_blog_path, class: "bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 shadow-md font-bold" %>
+	</div>
+
+	<div id="blogs" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+		<% if @blogs.any? %>
+			<% @blogs.each do |blog| %>
+				<div class="bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg p-6 transition-shadow">
+					<%= link_to blog.title, blog, class: "text-blue-600 hover:underline text-lg font-semibold block mb-2" %>
+					<p class="text-sm text-gray-600 mb-4">By <%= blog.user.email %></p>
+					<p class="text-gray-700 line-clamp-3"><%= blog.description %></p>
+				</div>
+			<% end %>
+		<% else %>
+			<p class="text-gray-600 text-center col-span-full">No blogs available.</p>
+		<% end %>
+	</div>
+</div>
+
