@@ -1,6 +1,6 @@
 class BlogsController < ApplicationController
 	before_action :set_blog, only: %i[show edit update destroy]
-	before_action :require_login, except: %i[index show]
+	before_action :requires_login, except: %i[index]
 
 	def index
 		@blogs = Blog.all
@@ -11,8 +11,8 @@ class BlogsController < ApplicationController
 	end
 
 	def create
-		@blog = Blog.new(blog_params.merge(user: current_user))
-		if @blog.save
+		@blog = Blog.new(blog_params.merge(:user => current_user))
+		if @blog.save!
 			flash[:notice] = "Blog was successfully created."
 			redirect_to @blog
 		else
@@ -40,13 +40,13 @@ class BlogsController < ApplicationController
 
 	def destroy
 		if @blog.user == current_user
-			@blog.destroy
+			@blog.destroy!
 			flash[:notice] = "Blog was successfully deleted."
-			redirect_to blogs_path
 		else
 			flash[:alert] = "Not authorized"
-			redirect_to blogs_path
 		end
+
+		redirect_to blogs_path
 	end
 
 	private
@@ -62,7 +62,7 @@ class BlogsController < ApplicationController
 		params.require(:blog).permit(:title, :description)
 	end
 
-	def require_login
+	def requires_login
 		redirect_to login_path, alert: "You must be logged in to perform this action." unless current_user
 	end
 
@@ -71,4 +71,3 @@ class BlogsController < ApplicationController
 	end
 	helper_method :current_user
 end
-

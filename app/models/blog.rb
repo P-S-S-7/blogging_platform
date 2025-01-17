@@ -3,8 +3,8 @@ class Blog < ApplicationRecord
 	has_rich_text :description
 
 	validates :title, :presence => true,
-		:length => { :minimum => 10 },
-		:format => { :with => /\A[a-zA-Z0-9\s]+\z/, :message => "can only contain letters, numbers, and spaces" }
+			:length => { :minimum => 10 },
+			:format => { :with => /\A[a-zA-Z0-9\s]+\z/, :message => "can only contain letters, numbers, and spaces" }
 	validate :description_has_at_least_one_line
 
 	private
@@ -15,4 +15,3 @@ class Blog < ApplicationRecord
 		end
 	end
 end
-
