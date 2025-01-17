@@ -1,5 +1,6 @@
 class BlogsController < ApplicationController
 	before_action :set_blog, only: %i[show edit update destroy]
+	before_action :require_login, except: %i[index show]
 
 	def index
 		@blogs = Blog.all
@@ -10,56 +11,64 @@ class BlogsController < ApplicationController
 	end
 
 	def create
-		user = user_check
-
-		@blog = Blog.get_new(blog_params[:title], blog_params[:description], user.id)
-
-		if @blog.save!
+		@blog = Blog.new(blog_params.merge(user: current_user))
+		if @blog.save
+			flash[:notice] = "Blog was successfully created."
 			redirect_to @blog
 		else
+			flash.now[:alert] = @blog.errors.full_messages.join(", ")
 			render :new, status: :unprocessable_entity
 		end
 	end
 
 	def show
+		redirect_to blogs_path unless @blog.user == current_user
 	end
 
 	def edit
 	end
 
 	def update
-		user = user_check
-
-		if @blog.update({:title => blog_params[:title], :description => blog_params[:description], :user_id => user.id})
+		if @blog.user == current_user && @blog.update(blog_params)
+			flash[:notice] = "Blog was successfully updated."
 			redirect_to @blog
 		else
+			flash.now[:alert] = @blog.errors.full_messages.join(", ")
 			render :edit, status: :unprocessable_entity
 		end
 	end
 
 	def destroy
-		@blog.destroy
-		redirect_to blogs_path
+		if @blog.user == current_user
+			@blog.destroy
+			flash[:notice] = "Blog was successfully deleted."
+			redirect_to blogs_path
+		else
+			flash[:alert] = "Not authorized"
+			redirect_to blogs_path
+		end
 	end
 
 	private
 
 	def set_blog
 		@blog = Blog.find(params[:id])
-		rescue ActiveRecord::RecordNotFound => e
-			flash[:alert] = 'Blog not found'
-			redirect_to blogs_path
+	rescue ActiveRecord::RecordNotFound
+		flash[:alert] = "Blog not found."
+		redirect_to blogs_path
 	end
 
 	def blog_params
-		params.require(:blog).permit(:title, :description, :email, :name)
+		params.require(:blog).permit(:title, :description)
 	end
 
-	def user_check
-		user = User.find_by(email: blog_params[:email])
-		user ||= User.create(email: blog_params[:email], name: blog_params[:name])
-
-		user
+	def require_login
+		redirect_to login_path, alert: "You must be logged in to perform this action." unless current_user
 	end
+
+	def current_user
+		@current_user ||= User.find_by(id: session[:user_id])
+	end
+	helper_method :current_user
 end
 
