@@ -1,6 +1,5 @@
 class User < ApplicationRecord
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+	devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable
 
 	has_many :blogs, dependent: :destroy
 	normalizes :email, with: ->(e) { e.strip.downcase }

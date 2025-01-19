@@ -1,5 +1,5 @@
 class BlogsController < ApplicationController
-	before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
+	before_action :authenticate_user!, only: %i[new create edit update destroy]
 	before_action :set_blog, only: %i[show edit update destroy]
 
 	def index
@@ -54,9 +54,9 @@ class BlogsController < ApplicationController
 
 	def set_blog
 		@blog = Blog.find(params[:id])
-		rescue ActiveRecord::RecordNotFound => e
-			flash[:alert] = 'Blog not found'
-			redirect_to blogs_path
+	rescue ActiveRecord::RecordNotFound => e
+		flash[:alert] = 'Blog not found'
+		redirect_to blogs_path
 	end
 
 	def blog_params
