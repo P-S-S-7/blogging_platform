@@ -26,4 +26,6 @@ Rails.application.routes.draw do
 	# delete "/blogs/:id", to: "blogs#destroy"
 
 	resources :blogs
+
+	devise_for :users
 end

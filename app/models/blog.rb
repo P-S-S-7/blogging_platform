@@ -12,8 +12,4 @@ class Blog < ApplicationRecord
 			errors.add(:description, "must contain at least one non-blank line")
 		end
 	end
-
-	def self.get_new(title, description, user_id)
-		Blog.new({:title => title, :description => description, :user_id => user_id})
-	end
 end
