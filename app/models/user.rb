@@ -10,9 +10,9 @@ class User < ApplicationRecord
 		%w[blogs]
 	end
 
-	normalizes :email, with: ->(e) { e.strip.downcase }
+	normalizes :email, with: ->(mail) { mail.strip.downcase }
 
 	validates :email, :presence => true, 
 			:uniqueness => true, 
-			:format => { :with => URI::MailTo::EMAIL_REGEXP, :message => "email format invalid" }
+			:format => { :with => URI::MailTo::EMAIL_REGEXP, :message => "email format is invalid" }
 end

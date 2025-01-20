@@ -13,14 +13,14 @@ class Blog < ApplicationRecord
 
 	validates :title, :presence => true,
 			:length => { :minimum => 10 },
-			:format => { :with => /\A[a-zA-Z0-9\s]+\z/, :message => "can only contain letters, numbers, and spaces" }
+			:format => { :with => /\A[a-zA-Z0-9\s]+\z/, :message => "must contain letters, numbers, and spaces only." }
 	validate :description_has_at_least_one_line
 
 	private
 
 	def description_has_at_least_one_line
 		if description.blank? || description.body.to_plain_text.strip.split("\n").all?(&:blank?)
-			errors.add(:description, "must contain at least one non-blank line")
+			errors.add(:description, "must contain at least one non-blank line.")
 		end
 	end
 end
