@@ -63,3 +63,8 @@ group :test do
 end
 
 gem "tailwindcss-rails", "~> 3.2"
+
+gem 'activeadmin'
+gem 'ransack'
+gem 'dotenv-rails'
+gem 'sass', '~> 3.7', '>= 3.7.4'

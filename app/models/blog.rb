@@ -1,5 +1,14 @@
 class Blog < ApplicationRecord
 	belongs_to :user
+
+	def self.ransackable_attributes(auth_object = nil)
+		["id", "title", "description", "created_at", "updated_at", "user_id"]
+	end
+
+	def self.ransackable_associations(auth_object = nil)
+		["rich_text_description", "user"]
+	end
+
 	has_rich_text :description
 
 	validates :title, :presence => true,
