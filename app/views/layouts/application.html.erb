@@ -10,9 +10,6 @@
 
 		<%= yield :head %>
 
-		<%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-		<%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
 		<link rel="icon" href="/icon.png" type="image/png">
 		<link rel="icon" href="/icon.svg" type="image/svg+xml">
 		<link rel="apple-touch-icon" href="/icon.png">
@@ -43,16 +40,29 @@
 			<div class="flex justify-center items-center">
 				<div class="w-full max-w-3xl">
 					<% flash.each do |type, msg| %>
-						<div class="<%= type == 'alert' ? 'flex items-center bg-red-100 border border-red-400 text-red-700' : 'flex items-center bg-green-100 border border-green-400 text-green-700' %> px-4 py-3 rounded mb-4 shadow text-center">
-							<p class="font-medium w-full"><%= msg %></p>
-						</div>
-					<% end %>
+						<% if type == 'alert' %>
+							<div class="flex items-center bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 shadow">
+							<% else %>
+								<div class="flex items-center bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 shadow">
+								<% end %>
+
+								<% if msg.is_a?(Array) %>
+									<ul class="font-medium w-full text-center list-disc pl-5">
+										<% msg.each do |m| %>
+											<li><%= m %></li>
+										<% end %>
+									</ul>
+								<% else %>
+									<p class="font-medium w-full text-center"><%= msg %></p>
+								<% end %>
+								</div>
+							<% end %>
+							</div>
 				</div>
 			</div>
-		</div>
 
-		<main class="container mx-auto mt-28 px-5 flex">
-			<%= yield %>
-		</main>
+			<main class="container mx-auto mt-28 px-5 flex">
+				<%= yield %>
+			</main>
 	</body>
 </html>

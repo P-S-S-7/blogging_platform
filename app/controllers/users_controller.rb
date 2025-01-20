@@ -5,11 +5,13 @@ class UsersController < ApplicationController
 
 	def create
 		@user = User.new(user_params)
-		if @user.save
+		begin
+			@user.save!
 			session[:user_id] = @user.id
-			redirect_to root_path, notice: "Account created successfully."
-		else
-			flash.now[:alert] = @user.errors.full_messages.join(", ")
+			flash[:notice] = "Account created successfully."
+			redirect_to root_path
+		rescue ActiveRecord::RecordInvalid => e
+			flash.now[:alert] = e.record.errors.full_messages
 			render :new, status: :unprocessable_entity
 		end
 	end
