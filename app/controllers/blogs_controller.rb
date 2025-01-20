@@ -15,7 +15,7 @@ class BlogsController < ApplicationController
 
 		begin
 			@blog.save!
-			flash[:notice] = "Blog was successfully created."
+			flash[:notice] = "Blog is successfully created."
 			redirect_to @blog
 		rescue ActiveRecord::RecordInvalid => e
 			flash.now[:alert] = e.record.errors.full_messages
