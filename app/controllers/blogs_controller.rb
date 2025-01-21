@@ -1,7 +1,5 @@
 class BlogsController < ApplicationController
 	before_action :set_blog, only: %i[show edit update destroy]
-	before_action :requires_login, except: %i[index]
-	before_action :requires_auth, only: %i[show edit]
 
 	def index
 		@blogs = Blog.all
@@ -12,41 +10,35 @@ class BlogsController < ApplicationController
 	end
 
 	def create
-		@blog = Blog.new(blog_params.merge(user: current_user))
+		user = user_check
 
-		begin
-			@blog.save!
-			flash[:notice] = "Blog is successfully created."
+		@blog = Blog.get_new(blog_params[:title], blog_params[:description], user.id)
+
+		if @blog.save!
 			redirect_to @blog
-		rescue ActiveRecord::RecordInvalid => e
-			flash.now[:alert] = e.record.errors.full_messages
+		else
 			render :new, status: :unprocessable_entity
 		end
 	end
 
+	def show
+	end
+
+	def edit
+	end
+
 	def update
-		if @blog.user == current_user
-			begin
-				@blog.update!(blog_params)
-				flash[:notice] = "Blog is successfully updated."
-				redirect_to @blog
-			rescue ActiveRecord::RecordInvalid => e
-				flash.now[:alert] = e.record.errors.full_messages
-				render :edit, status: :unprocessable_entity
-			end
+		user = user_check
+
+		if @blog.update({:title => blog_params[:title], :description => blog_params[:description], :user_id => user.id})
+			redirect_to @blog
 		else
-			flash[:alert] = "You are not authorized to update this blog."
-			redirect_to blogs_path
+			render :edit, status: :unprocessable_entity
 		end
 	end
 
 	def destroy
-		if @blog.user == current_user && @blog.destroy!
-			flash[:notice] = "Blog is successfully deleted."
-		else
-			flash[:alert] = "You are not authorized to delete this blog."
-		end
-
+		@blog.destroy
 		redirect_to blogs_path
 	end
 
@@ -54,33 +46,20 @@ class BlogsController < ApplicationController
 
 	def set_blog
 		@blog = Blog.find(params[:id])
-	rescue ActiveRecord::RecordNotFound
-		flash[:alert] = "Blog not found."
-		redirect_to blogs_path
+		rescue ActiveRecord::RecordNotFound => e
+			flash[:alert] = 'Blog not found'
+			redirect_to blogs_path
 	end
 
 	def blog_params
-		params.require(:blog).permit(:title, :description)
+		params.require(:blog).permit(:title, :description, :email, :name)
 	end
 
-	def requires_login
-		if !current_user
-			flash[:alert] = "You must be logged in to perform this action."
-			redirect_to login_path
-			return
-		end
-	end
+	def user_check
+		user = User.find_by(email: blog_params[:email])
+		user ||= User.create(email: blog_params[:email], name: blog_params[:name])
 
-	def requires_auth
-		if @blog.user != current_user
-			flash[:alert] = "You are not authorized to perform this action"
-			redirect_to blogs_path
-			return
-		end
+		user
 	end
-
-	def current_user
-		@current_user ||= User.find_by(id: session[:user_id])
-	end
-	helper_method :current_user
 end
+
