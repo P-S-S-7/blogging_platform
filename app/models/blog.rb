@@ -3,6 +3,14 @@ class Blog < ApplicationRecord
 	has_rich_text :description
 	has_many :comments, dependent: :destroy
 
+	def self.ransackable_attributes(auth_object = nil)
+		["id", "title", "description", "created_at", "updated_at", "user_id"]
+	end
+
+	def self.ransackable_associations(auth_object = nil)
+		["rich_text_description", "user"]
+	end
+
 	validates :title, :presence => true, 
 			:length => { :minimum => 10 }, 
 			:format => { :with => /\A[a-zA-Z0-9\s]+\z/, :message => "can only contain letters, numbers, and spaces" }
