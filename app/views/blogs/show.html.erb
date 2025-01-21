@@ -1,21 +1,71 @@
 <div class="container mx-auto px-4 py-10">
 	<div class="bg-gray-100 shadow-md rounded-lg p-6 mb-8">
 		<div class="flex justify-between items-center border-b border-gray-300 pb-4 mb-6">
-			<h1 class="text-2xl font-bold text-gray-800 underline"><%= @blog.title %></h1>
-			<p class="text-sm text-gray-600"><%= @blog.user.email %></p>
+			<h1 class="text-3xl font-bold text-gray-800 underline"><%= @blog.title %></h1>
+			<p class="text-sm text-gray-600 italic"><%= @blog.user.email %></p>
 		</div>
-
 		<div>
 			<p class="text-lg text-gray-700 leading-relaxed"><%= @blog.description %></p>
 		</div>
 	</div>
 
-	<div class="flex justify-end space-x-4">
-		<%= link_to "Back", blogs_path, class: "text-blue-600 hover:text-blue-800 underline" %>
-		<%= link_to "Edit", edit_blog_path(@blog), class: "text-yellow-600 hover:text-yellow-800 underline" %>
-		<%= button_to "Delete", @blog, method: :delete,
-			data: { turbo_confirm: "Are you sure?" },
-			class: "text-red-600 hover:text-red-800 underline" %>
+	<div class="flex justify-end space-x-4 mb-6">
+		<%= link_to "Back", blogs_path, 
+			class: "text-blue-600 hover:text-blue-800 underline" %>
+			<%= link_to "Edit", edit_blog_path(@blog), 
+				class: "text-yellow-600 hover:text-yellow-800 underline" %>
+				<%= button_to "Delete", @blog, 
+						method: :delete,
+						data: { turbo_confirm: "Are you sure?" },
+						class: "text-red-600 hover:text-red-800 underline" %>
 	</div>
-</div>
 
+	<hr class="my-6 border-gray-300 mb-4">
+
+	<div class="mb-4 bg-gray-50 shadow-lg rounded-lg p-6 border border-gray-200">
+		<h2 class="text-3xl font-semibold text-gray-900 mb-6">Comments</h2>
+
+		<% if @comments.any? %>
+			<% @comments.each do |comment| %>
+				<div class="bg-gray-100 shadow-md rounded-lg p-6 mb-6">
+					<div class="flex justify-between items-center border-b border-gray-300 pb-4 mb-4">
+						<strong class="text-gray-800 text-xl italic"><%= comment.user.email %></strong>
+						<% if comment.user == current_user %>
+							<%= link_to "Delete",
+									blog_comment_path(@blog, comment),
+									method: :delete,
+									data: { confirm: "Are you sure?" },
+									class: "text-red-600 hover:text-red-800 font-medium underline" %>
+							<% end %>
+					</div>
+					<p class="text-gray-700 mt-2 p-2 text-lg"><%= comment.content %></p>
+				</div>
+			<% end %>
+		<% else %>
+			<p class="text-gray-600 italic">No comments yet. Be the first to comment!</p>
+		<% end %>
+	</div>
+
+	<% if user_signed_in? %>
+		<div class="bg-gray-50 shadow-lg rounded-lg p-6 border border-gray-200 mt-8">
+			<h3 class="text-2xl font-semibold text-gray-900 mb-4">Add a Comment</h3>
+			<%= form_with model: [@blog, @comment], local: true, class: "space-y-4" do |form| %>
+				<div>
+					<%= form.label :content, "Your Comment", 
+						class: "block text-sm font-medium text-gray-700" %>
+						<%= form.text_area :content, 
+								rows: 3, 
+								class: "mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2" %>
+				</div>
+				<div class="flex justify-end">
+					<%= form.submit "Add Comment", 
+						class: "mt-4 px-6 py-2 bg-blue-600 text-white font-semibold rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" %>
+				</div>
+			<% end %>
+		</div>
+	<% else %>
+		<p class="text-gray-600 italic mt-8">
+		Please <%= link_to "log in", new_user_session_path, class: "text-blue-600 hover:text-blue-800 underline" %> to leave a comment.
+		</p>
+	<% end %>
+</div>

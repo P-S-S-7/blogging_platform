@@ -10,6 +10,7 @@ class Blog < ApplicationRecord
 	end
 
 	has_rich_text :description
+	has_many :comments, dependent: :destroy
 
 	validates :title, :presence => true, 
 			:length => { :minimum => 10 }, 

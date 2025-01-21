@@ -1,5 +1,5 @@
 class BlogsController < ApplicationController
-	before_action :authenticate_user!, only: %i[new create edit update destroy show]
+	before_action :authenticate_user!, only: %i[new create edit update destroy]
 	before_action :set_blog, only: %i[show edit update destroy]
 	before_action :validate_user, only: %i[edit destroy]
 
@@ -22,6 +22,11 @@ class BlogsController < ApplicationController
 			flash.now[:alert] = e.record.errors.full_messages
 			render :new, status: :unprocessable_entity
 		end
+	end
+
+	def show
+		@comments = @blog.comments.includes(:user)
+		@comment = Comment.new
 	end
 
 	def update

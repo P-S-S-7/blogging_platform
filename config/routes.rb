@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+
 	ActiveAdmin.routes(self)
 
 	# Defines the root path route ("/")
@@ -17,7 +18,10 @@ Rails.application.routes.draw do
 
 	# delete "/blogs/:id", to: "blogs#destroy"
 
-	resources :blogs
+	resources :blogs do
+		resources :comments, only: [:create, :destroy]
+		get 'comments/:id', to: 'comments#destroy', as: 'destroy_comment'
+	end
 
 	devise_for :users
 end
