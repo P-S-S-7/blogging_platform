@@ -51,13 +51,13 @@ class BlogsController < ApplicationController
 	def validate_user
 		if @blog.user != current_user
 			flash[:alert] = "You are not authorized to #{action_name} this blog"
+			redirect_to blogs_path
 		else
 			if action_name == 'destroy' && @blog.destroy
 				flash[:notice] = "Blog was successfully deleted."
+				redirect_to blogs_path
 			end
 		end
-
-		redirect_to blogs_path
 	end
 
 	def blog_params
