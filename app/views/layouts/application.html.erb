@@ -10,6 +10,9 @@
 
 		<%= yield :head %>
 
+		<%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+		<%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+
 		<link rel="icon" href="/icon.png" type="image/png">
 		<link rel="icon" href="/icon.svg" type="image/svg+xml">
 		<link rel="apple-touch-icon" href="/icon.png">
@@ -23,14 +26,17 @@
 	<body>
 		<nav>
 			<div class="flex justify-between items-center bg-gray-100 px-6 py-4 shadow-md">
-				<%= link_to "Home", root_path, class: "px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" %>
+				<%= link_to root_path, class: "px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" do %>
+					<button class="w-full">Home</button>
+				<% end %>
+
 				<div class="space-x-4">
 					<% if current_user %>
 						<%= current_user.email %>
-						<%= link_to "Logout", logout_path, method: :delete, class: "px-6 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2" %>
+						<%= link_to "Logout", destroy_user_session_path, method: :delete, class: "px-6 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2" %>
 					<% else %>
-						<%= link_to "Login", login_path, class: "px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" %>
-						<%= link_to "Sign Up", new_user_path, class: "px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" %>
+						<%= link_to "Sign In", new_user_session_path, class: "px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" %>
+						<%= link_to "Sign Up", new_user_registration_path, class: "px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" %>
 					<% end %>
 				</div>
 			</div>
@@ -47,7 +53,7 @@
 							<% end %>
 
 							<% if msg.is_a?(Array) %>
-								<ul class="font-medium w-full text-center list-disc pl-5">
+								<ul class="font-medium w-full text-left list-disc pl-5">
 									<% msg.each do |m| %>
 										<li><%= m %></li>
 									<% end %>
@@ -55,6 +61,7 @@
 							<% else %>
 								<p class="font-medium w-full text-center"><%= msg %></p>
 							<% end %>
+
 						</div>
 					<% end %>
 				</div>

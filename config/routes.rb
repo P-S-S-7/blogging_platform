@@ -1,7 +1,6 @@
 Rails.application.routes.draw do
+	ActiveAdmin.routes(self)
 
-  ActiveAdmin.routes(self)
-	
 	# Defines the root path route ("/")
 	root "blogs#index"
 
@@ -20,10 +19,5 @@ Rails.application.routes.draw do
 
 	resources :blogs
 
-	resources :users, only: [:new, :create]
-	get "signup", to: "users#new"
-
-	get "login", to: "sessions#new"
-	post "login", to: "sessions#create"
-	get "logout", to: "sessions#destroy"
+	devise_for :users
 end
