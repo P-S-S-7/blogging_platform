@@ -1,7 +1,7 @@
 class BlogsController < ApplicationController
 	before_action :authenticate_user!, only: %i[new create edit update destroy show]
 	before_action :set_blog, only: %i[show edit update destroy]
-	before_action :requires_auth, only: %i[edit]
+	before_action :validate_user, only: %i[edit destroy]
 
 	def index
 		@blogs = Blog.all
@@ -25,29 +25,17 @@ class BlogsController < ApplicationController
 	end
 
 	def update
-		if @blog.user == current_user
-			begin
-				@blog.update!(blog_params)
-				flash[:notice] = "Blog is successfully updated."
-				redirect_to @blog
-			rescue ActiveRecord::RecordInvalid => e
-				flash.now[:alert] = e.record.errors.full_messages
-				render :edit, status: :unprocessable_entity
-			end
-		else
-			flash[:alert] = "You are not authorized to update this blog."
-			redirect_to blogs_path
+		begin
+			@blog.update!(blog_params)
+			flash[:notice] = "Blog is successfully updated."
+			redirect_to @blog
+		rescue ActiveRecord::RecordInvalid => e
+			flash.now[:alert] = e.record.errors.full_messages
+			render :edit, status: :unprocessable_entity
 		end
 	end
 
 	def destroy
-		if @blog.user == current_user && @blog.destroy!
-			flash[:notice] = "Blog is successfully deleted."
-		else
-			flash[:alert] = "You are not authorized to delete this blog."
-		end
-
-		redirect_to blogs_path
 	end
 
 	private
@@ -60,12 +48,16 @@ class BlogsController < ApplicationController
 		return
 	end
 
-	def requires_auth
+	def validate_user
 		if @blog.user != current_user
-			flash[:alert] = "You are not authorized to perform this action"
-			redirect_to blogs_path
-			return
+			flash[:alert] = "You are not authorized to #{action_name} this blog"
+		else
+			if action_name == 'destroy' && @blog.destroy
+				flash[:notice] = "Blog was successfully deleted."
+			end
 		end
+
+		redirect_to blogs_path
 	end
 
 	def blog_params
