@@ -33,10 +33,10 @@ class BlogsController < ApplicationController
 			rescue ActiveRecord::RecordInvalid => e
 				flash.now[:alert] = e.record.errors.full_messages
 				render :edit, status: :unprocessable_entity
-			else
-				flash[:alert] = "You are not authorized to update this blog."
-				redirect_to blogs_path
 			end
+		else
+			flash[:alert] = "You are not authorized to update this blog."
+			redirect_to blogs_path
 		end
 	end
 
