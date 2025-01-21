@@ -1,9 +1,4 @@
 ActiveAdmin.setup do |config|
-	config.before_action do
-    authenticate_or_request_with_http_basic('Admin') do |username, password|
-      username == ENV['ADMIN_USERNAME'] && password == ENV['ADMIN_PASSWORD']
-    end
-  end
   # == Site Title
   #
   # Set the title that is displayed on the main layout

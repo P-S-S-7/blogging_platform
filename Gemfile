@@ -65,6 +65,5 @@ end
 gem "tailwindcss-rails", "~> 3.2"
 
 gem 'activeadmin'
+gem 'activeadmin_assets'
 gem 'ransack'
-gem 'dotenv-rails'
-gem 'sass', '~> 3.7', '>= 3.7.4'
