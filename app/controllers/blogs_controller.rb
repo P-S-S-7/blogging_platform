@@ -1,6 +1,7 @@
 class BlogsController < ApplicationController
 	before_action :set_blog, only: %i[show edit update destroy]
 	before_action :requires_login, except: %i[index]
+	before_action :requires_auth, only: %i[show edit]
 
 	def index
 		@blogs = Blog.all
@@ -20,20 +21,6 @@ class BlogsController < ApplicationController
 		rescue ActiveRecord::RecordInvalid => e
 			flash.now[:alert] = e.record.errors.full_messages
 			render :new, status: :unprocessable_entity
-		end
-	end
-
-	def show
-		if @blog.user != current_user
-			flash[:alert] = "You are not authorized to view this blog."
-			redirect_to blogs_path 
-		end
-	end
-
-	def edit
-		if @blog.user != current_user
-			flash[:alert] = "You are not authorized to edit this blog."
-			redirect_to blogs_path
 		end
 	end
 
@@ -80,6 +67,15 @@ class BlogsController < ApplicationController
 		if !current_user
 			flash[:alert] = "You must be logged in to perform this action."
 			redirect_to login_path
+			return
+		end
+	end
+
+	def requires_auth
+		if @blog.user != current_user
+			flash[:alert] = "You are not authorized to perform this action"
+			redirect_to blogs_path
+			return
 		end
 	end
 
