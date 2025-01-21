@@ -1,5 +1,7 @@
 class BlogsController < ApplicationController
+	before_action :authenticate_user!, only: %i[new create edit update destroy show]
 	before_action :set_blog, only: %i[show edit update destroy]
+	before_action :validate_user, only: %i[edit destroy]
 
 	def index
 		@blogs = Blog.all
@@ -10,56 +12,55 @@ class BlogsController < ApplicationController
 	end
 
 	def create
-		user = user_check
+		@blog = current_user.blogs.new(blog_params)
 
-		@blog = Blog.get_new(blog_params[:title], blog_params[:description], user.id)
-
-		if @blog.save!
+		begin
+			@blog.save!
+			flash[:notice] = "Blog is successfully created."
 			redirect_to @blog
-		else
+		rescue ActiveRecord::RecordInvalid => e
+			flash.now[:alert] = e.record.errors.full_messages
 			render :new, status: :unprocessable_entity
 		end
 	end
 
-	def show
-	end
-
-	def edit
-	end
-
 	def update
-		user = user_check
-
-		if @blog.update({:title => blog_params[:title], :description => blog_params[:description], :user_id => user.id})
+		begin
+			@blog.update!(blog_params)
+			flash[:notice] = "Blog is successfully updated."
 			redirect_to @blog
-		else
+		rescue ActiveRecord::RecordInvalid => e
+			flash.now[:alert] = e.record.errors.full_messages
 			render :edit, status: :unprocessable_entity
 		end
 	end
 
 	def destroy
-		@blog.destroy
-		redirect_to blogs_path
 	end
 
 	private
 
 	def set_blog
 		@blog = Blog.find(params[:id])
-		rescue ActiveRecord::RecordNotFound => e
-			flash[:alert] = 'Blog not found'
+	rescue ActiveRecord::RecordNotFound => e
+		flash[:alert] = 'Blog not found'
+		redirect_to blogs_path
+		return
+	end
+
+	def validate_user
+		if @blog.user != current_user
+			flash[:alert] = "You are not authorized to #{action_name} this blog"
 			redirect_to blogs_path
+		else
+			if action_name == 'destroy' && @blog.destroy
+				flash[:notice] = "Blog was successfully deleted."
+				redirect_to blogs_path
+			end
+		end
 	end
 
 	def blog_params
-		params.require(:blog).permit(:title, :description, :email, :name)
-	end
-
-	def user_check
-		user = User.find_by(email: blog_params[:email])
-		user ||= User.create(email: blog_params[:email], name: blog_params[:name])
-
-		user
+		params.require(:blog).permit(:title, :description)
 	end
 end
-

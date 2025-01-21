@@ -1,6 +1,10 @@
 class User < ApplicationRecord
-	has_many :blogs, dependent: :destroy
-	normalizes :email, with: ->(e) { e.strip.downcase }
+	devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable
 
-	validates :email, :presence => true, :format => { :with => /\A[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\z/, :message => "email format invalid" }
+	has_many :blogs, dependent: :destroy
+	normalizes :email, with: ->(mail) { mail.strip.downcase }
+
+	validates :email, :presence => true, 
+			:uniqueness => true, 
+			:format => { :with => URI::MailTo::EMAIL_REGEXP, :message => "email format is invalid" }
 end
