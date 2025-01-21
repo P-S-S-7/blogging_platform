@@ -18,7 +18,7 @@
 		<link rel="apple-touch-icon" href="/icon.png">
 
 		<%# Includes all stylesheet files in app/assets/stylesheets %>
-		<%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
+		<%= stylesheet_link_tag "application.tailwind", "inter-font", "data-turbo-track": "reload" %>
 		<%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
 		<%= javascript_importmap_tags %>
 	</head>
@@ -54,7 +54,7 @@
 							<% end %>
 
 							<% if msg.is_a?(Array) %>
-								<ul class="font-medium w-full text-center list-disc pl-5">
+								<ul class="font-medium w-full text-left list-disc pl-5">
 									<% msg.each do |m| %>
 										<li><%= m %></li>
 									<% end %>
