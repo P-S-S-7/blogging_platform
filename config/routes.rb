@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  # Defines the root path route ("/")
+	# Defines the root path route ("/")
 	root "blogs#index"
 
 	# get "/blogs", to: "blogs#index"
@@ -15,7 +15,10 @@ Rails.application.routes.draw do
 
 	# delete "/blogs/:id", to: "blogs#destroy"
 
-	resources :blogs
+	resources :blogs do
+		resources :comments, only: [:create, :destroy]
+		get 'comments/:id', to: 'comments#destroy', as: 'destroy_comment'
+	end
 
 	devise_for :users
 end
