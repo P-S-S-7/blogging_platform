@@ -5,11 +5,11 @@ class User < ApplicationRecord
 	has_many :blog_comments, dependent: :destroy
 
 	def self.ransackable_attributes(auth_object = nil)
-		%w[id name email created_at updated_at]
+		["id", "name", "email", "created_at", "updated_at"]
 	end
 
 	def self.ransackable_associations(auth_object = nil)
-		%w[blogs]
+		["blogs"]
 	end
 
 	normalizes :email, with: ->(mail) { mail.strip.downcase }
