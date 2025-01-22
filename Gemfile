@@ -68,3 +68,7 @@ gem "devise"
 gem 'activeadmin'
 gem 'activeadmin_assets'
 gem 'ransack'
+gem 'omniauth'
+gem 'omniauth-google-oauth2'
+gem "omniauth-rails_csrf_protection"
+gem 'dotenv-rails', groups: [:development, :test]

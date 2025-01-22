@@ -1,7 +1,7 @@
 class Blog < ApplicationRecord
 	belongs_to :user
 	has_rich_text :description
-	has_many :comments, dependent: :destroy
+	has_many :blog_comments, dependent: :destroy
 
 	def self.ransackable_attributes(auth_object = nil)
 		["id", "title", "description", "created_at", "updated_at", "user_id"]

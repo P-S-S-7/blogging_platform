@@ -1,13 +1,13 @@
-class CommentsController < ApplicationController
+class BlogCommentsController < ApplicationController
 	before_action :authenticate_user!
 	before_action :set_comment, only: [:destroy]
 
 	def create
 		@blog = Blog.find(params[:blog_id])
-		@comment = @blog.comments.new(comment_params)
-		@comment.user = current_user
+		@blog_comment = @blog.blog_comments.new(comment_params)
+		@blog_comment.user = current_user
 
-		begin @comment.save!
+		begin @blog_comment.save!
 			flash[:notice] = "Comment added successfully."
 			redirect_to blog_path(@blog)
 		rescue ActiveRecord::RecordInvalid => e
@@ -17,23 +17,23 @@ class CommentsController < ApplicationController
 	end
 
 	def destroy
-		if @comment.user == current_user
-			@comment.destroy
+		if @blog_comment.user == current_user
+			@blog_comment.destroy
 			flash[:notice] = "Comment deleted successfully."
 		else
 			flash[:alert] = "You are not authorized to delete this comment."
 		end
-		redirect_to blog_path(@comment.blog)
+		redirect_to blog_path(@blog_comment.blog)
 	end
 
 	private
 
 	def set_comment
-		@comment = Comment.find(params[:id])
+		@blog_comment = BlogComment.find(params[:id])
 	end
 
 	def comment_params
-		params.require(:comment).permit(:content)
+		params.require(:blog_comment).permit(:content)
 	end
 end
 
