@@ -14,7 +14,8 @@ class User < ApplicationRecord
 
 	normalizes :email, with: ->(mail) { mail.strip.downcase }
 
+	validates :name, :presence => true
 	validates :email, :presence => true, 
 			:uniqueness => true, 
-			:format => { :with => URI::MailTo::EMAIL_REGEXP, :message => "email format is invalid" }
+			:format => { :with => URI::MailTo::EMAIL_REGEXP, :message => "format is invalid" }
 end

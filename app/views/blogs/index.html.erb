@@ -10,7 +10,7 @@
 				<div class="bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg p-6 transition-shadow">
 					<%= link_to blog.title, blog, class: "text-blue-600 hover:underline text-lg font-semibold block mb-2" %>
 					<p class="text-sm text-gray-600 mb-4">By <%= blog.user.email %></p>
-					<p class="text-gray-700 line-clamp-3"><%= blog.description %></p>
+					<p class="text-gray-700 line-clamp-3"><%= truncate(strip_tags(blog.description), length: 200) %></p>
 				</div>
 			<% end %>
 		<% else %>

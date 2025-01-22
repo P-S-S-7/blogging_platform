@@ -9,11 +9,10 @@ class BlogCommentsController < ApplicationController
 
 		begin @blog_comment.save!
 			flash[:notice] = "Comment added successfully."
-			redirect_to blog_path(@blog)
 		rescue ActiveRecord::RecordInvalid => e
-			flash.now[:alert] = e.record.errors.full_messages
-			render :new, status: :unprocessable_entity
+			flash[:alert] = e.record.errors.full_messages
 		end
+		redirect_to blog_path(@blog)
 	end
 
 	def destroy
@@ -36,4 +35,3 @@ class BlogCommentsController < ApplicationController
 		params.require(:blog_comment).permit(:content)
 	end
 end
-
