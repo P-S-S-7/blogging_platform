@@ -65,3 +65,8 @@ end
 gem "tailwindcss-rails", "~> 3.2"
 
 gem "devise"
+gem 'activeadmin'
+gem 'activeadmin_assets'
+gem 'omniauth-google-oauth2'
+gem "omniauth-rails_csrf_protection"
+gem 'dotenv-rails'

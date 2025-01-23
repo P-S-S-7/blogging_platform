@@ -1,6 +1,15 @@
 class Blog < ApplicationRecord
 	belongs_to :user
 	has_rich_text :description
+	has_many :blog_comments, dependent: :destroy
+
+	def self.ransackable_attributes(auth_object = nil)
+		["id", "title", "description", "created_at", "updated_at", "user_id"]
+	end
+
+	def self.ransackable_associations(auth_object = nil)
+		["rich_text_description", "user"]
+	end
 
 	validates :title, :presence => true, 
 			:length => { :minimum => 10 }, 
